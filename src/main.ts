@@ -12,17 +12,25 @@ const canvas: any = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
+/**
+ * Loaders
+ */
+const textureLoader = new THREE.TextureLoader()
+
 // Objects
-const geometry = new THREE.TorusGeometry( .7, .2, 16, 100 );
+const geometry = new THREE.PlaneBufferGeometry(1, 1.3)
 
-// Materials
+for(let i = 0; i < 4; i++) {
+  const material = new THREE.MeshBasicMaterial({
+    map: textureLoader.load(`../static/img/${i}.jpg`)
+  })
 
-const material = new THREE.MeshBasicMaterial()
-material.color = new THREE.Color(0xff0000)
+  const img = new THREE.Mesh(geometry, material)
+  img.position.set(Math.random()+ .3, -i*1.8, 0)
 
-// Mesh
-const sphere = new THREE.Mesh(geometry,material)
-scene.add(sphere)
+  scene.add(img)
+}
+
 
 // Lights
 
@@ -65,9 +73,11 @@ camera.position.y = 0
 camera.position.z = 2
 scene.add(camera)
 
+gui.add(camera.position, 'y').min(-5).max(10).step(0.5)
+
 // Controls
-const controls = new OrbitControls(camera, canvas)
-controls.enableDamping = true
+// const controls = new OrbitControls(camera, canvas)
+// controls.enableDamping = true
 
 /**
  * Renderer
@@ -90,10 +100,9 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
-    sphere.rotation.y = .5 * elapsedTime
 
     // Update Orbital Controls
-    controls.update()
+    // controls.update()
 
     // Render
     renderer.render(scene, camera)
