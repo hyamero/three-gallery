@@ -88,6 +88,14 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
+// Mouse
+let y = 0
+let position = 0
+
+window.addEventListener('wheel', (e) => {
+  y = -(e.deltaY * 0.0007)
+})
+
 /**
  * Animate
  */
@@ -100,6 +108,11 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update objects
+
+    position += y
+    y *= .9
+
+    camera.position.y = position
 
     // Update Orbital Controls
     // controls.update()
