@@ -31,14 +31,16 @@ for(let i = 0; i < 4; i++) {
   scene.add(img)
 }
 
+let objs: any = []
 
-// Lights
+scene.traverse((object) => {
+  if (object instanceof THREE.Mesh) objs.push(object)
+})
 
-const pointLight = new THREE.PointLight(0xffffff, 0.1)
-pointLight.position.x = 2
-pointLight.position.y = 3
-pointLight.position.z = 4
-scene.add(pointLight)
+/**
+ * Raycaster
+ */
+ const raycaster = new THREE.Raycaster()
 
 /**
  * Sizes
@@ -62,6 +64,17 @@ window.addEventListener('resize', () =>
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
+
+/**
+ * Mouse
+ */
+
+
+// const mouse = new THREE.Vector2;
+
+// window.addEventListener("mousemove", (e) => [
+//   mouse.x = (e.clientX / sizes.width) * 2 - 1
+// ])
 
 /**
  * Camera
@@ -96,6 +109,13 @@ window.addEventListener('wheel', (e) => {
   y = -(e.deltaY * 0.0007)
 })
 
+const mouse = new THREE.Vector2()
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = e.clientX / sizes.width * 2 - 1
+  mouse.y = - (e.clientY / sizes.height) * 2 + 1
+})
+
 /**
  * Animate
  */
@@ -107,12 +127,25 @@ const tick = () =>
 
     const elapsedTime = clock.getElapsedTime()
 
-    // Update objects
-
+    // Update camera
     position += y
     y *= .9
 
     camera.position.y = position
+
+    // Raycaster
+    raycaster.setFromCamera(mouse, camera)
+    const intersects = raycaster.intersectObjects(objs)
+
+    intersects.forEach((intersect) => {
+      intersect.object.scale.set(1.1, 1.1, 1)
+    })
+
+    objs.forEach((object: THREE.Object3D) => {
+      if(!intersects.find(intersect => intersect.object === object)) {
+        object.scale.set(1, 1, 1)
+      }
+    })
 
     // Update Orbital Controls
     // controls.update()
