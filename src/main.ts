@@ -2,6 +2,7 @@ import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'dat.gui'
+import gsap from 'gsap'
 
 // Debug
 const gui = new dat.GUI()
@@ -138,12 +139,17 @@ const tick = () =>
     const intersects = raycaster.intersectObjects(objs)
 
     intersects.forEach((intersect) => {
-      intersect.object.scale.set(1.1, 1.1, 1)
+      gsap.to(intersect.object.scale, {x: 1.7, y: 1.7})
+      gsap.to(intersect.object.rotation, {y: -0.5})
+      gsap.to(intersect.object.position, {z: -0.9})
     })
 
     objs.forEach((object: THREE.Object3D) => {
       if(!intersects.find(intersect => intersect.object === object)) {
-        object.scale.set(1, 1, 1)
+        gsap.to(object.scale, {x: 1, y: 1})
+        gsap.to(object.rotation, {y: 0})
+        gsap.to(object.position, {z: 0})
+
       }
     })
 
